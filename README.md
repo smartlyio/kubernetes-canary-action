@@ -16,6 +16,7 @@ This will be used to provide functionality like:
 ## Inputs
 
 | Name | Default | Required | Description |
+|------|---------|----------|-------------|
 | kubernetesContext | | yes | Kubernetes context name. Usually the name of the cluster, but can be random. |
 | serviceName | | yes | Name of the kubernetes service to operate on. |
 | command | | yes | Canary support command to run. Currently onlyu isLocked is allowed. |
@@ -23,6 +24,7 @@ This will be used to provide functionality like:
 ## Outputs
 
 | Name | Description |
+|------|-------------|
 | CURRENT_IMAGE_SHA | Current docker image tag running in the cluster |
 | LOCKED | Is deployment currently locked [true/false] |
 
