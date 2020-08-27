@@ -150,6 +150,8 @@ ${image}
       const baseCommand = command.slice(0, 2).join(' ')
       if (baseCommand === 'get deployments') {
         return deploymentsStdout
+      } else if (baseCommand === 'get pods') {
+        return ''
       }
       throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
     })
@@ -164,7 +166,7 @@ ${image}
     expect(warningMock.mock.calls.length).toBe(0)
   })
 
-  test('multiple deployments', async () => {
+  test('multiple deployments, one prod image', async () => {
     const deploymentsStdout = `<none>
 <none>
 <none>
@@ -173,11 +175,25 @@ true
 true
 <none>
 `
+    const gitSha = 'abc123'
+    const image = `prod.smartly.af/serviceName:${gitSha}`
+    const podsStdout = `${image}
+${image}
+${image}
+${image}
+${image}
+${image}
+${image}
+${image}
+${image}
+`
     const runKubectlMock = mocked(runKubectl)
     runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
       const baseCommand = command.slice(0, 2).join(' ')
       if (baseCommand === 'get deployments') {
         return deploymentsStdout
+      } else if (baseCommand === 'get pods') {
+        return podsStdout
       }
       throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
     })
@@ -185,8 +201,54 @@ true
     await isLocked('context', 'serviceName')
 
     const setOutputMock = mocked(setOutput)
-    expect(setOutputMock.mock.calls.length).toBe(1)
-    expect(setOutputMock).toHaveBeenCalledWith('LOCKED', true.toString())
+    const calls = setOutputMock.mock.calls
+    expect(calls.length).toBe(2)
+    expect(calls[0]).toEqual(['CURRENT_IMAGE_SHA', gitSha])
+    expect(calls[1]).toEqual(['LOCKED', true.toString()])
+
+    const warningMock = mocked(warning)
+    expect(warningMock.mock.calls.length).toBe(0)
+  })
+
+  test('multiple deployments, multiple prod images', async () => {
+    const deploymentsStdout = `<none>
+<none>
+<none>
+true
+<none>
+true
+<none>
+`
+    const gitSha = 'abc123'
+    const image = `prod.smartly.af/serviceName:${gitSha}`
+    const podsStdout = `${image}
+${image}
+${image}
+${image}
+${image}
+${image}
+${image}
+${image}
+${image}
+prod.smartly.af/serviceName:def678
+`
+    const runKubectlMock = mocked(runKubectl)
+    runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
+      const baseCommand = command.slice(0, 2).join(' ')
+      if (baseCommand === 'get deployments') {
+        return deploymentsStdout
+      } else if (baseCommand === 'get pods') {
+        return podsStdout
+      }
+      throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
+    })
+
+    await isLocked('context', 'serviceName')
+
+    const setOutputMock = mocked(setOutput)
+    const calls = setOutputMock.mock.calls
+    expect(calls.length).toBe(1)
+    expect(calls[0]).toEqual(['LOCKED', true.toString()])
 
     const warningMock = mocked(warning)
     expect(warningMock.mock.calls.length).toBe(0)
