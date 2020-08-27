@@ -9,6 +9,9 @@ inputs:
   serviceName:
     description: 'Name of the service'
     required: true
+  deploymentName:
+    description: 'Name of the deployment within service to operate rollbacks on'
+    required: false
   command:
     description: 'Canary support command to run. One of [lock|unlock|isLocked]'
     required: true
