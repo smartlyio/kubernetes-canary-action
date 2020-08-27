@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {isLocked} from './islocked'
+import {isLocked} from './locks'
 
 async function run(): Promise<void> {
   try {

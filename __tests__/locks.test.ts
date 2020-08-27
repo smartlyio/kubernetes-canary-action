@@ -1,7 +1,7 @@
 import {setOutput, warning} from '@actions/core'
 import {mocked} from 'ts-jest/utils'
 import {runKubectl} from '../src/kubectl'
-import {isLocked} from '../src/islocked'
+import {isLocked} from '../src/locks'
 
 jest.mock('@actions/core')
 jest.mock('../src/kubectl', () => {
