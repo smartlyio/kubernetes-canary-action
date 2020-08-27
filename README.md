@@ -1,12 +1,11 @@
 # Kubernetes canary action
 
-An action to handle kubectl output parsing for canary deploys and rollbacks.
+An action to handle kubectl interaction for canary deploys and deploy lock/unlock
 
 This will be used to provide functionality like:
 - Determine if a deploy is locked after canary
+- Lock a deployment
 - Unlock a deployment
-- list available rollbacks
-- Roll back a deployment
 
 ## Requirements
 

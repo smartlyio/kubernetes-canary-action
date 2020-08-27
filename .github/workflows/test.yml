@@ -57,11 +57,3 @@ jobs:
         kubernetesContext: test-context
         command: lock
         user: github-actions
-    - name: List recent deployments
-      uses: ./
-      with: 
-        serviceName: test-service
-        kubernetesContext: test-context
-        command: listRecentDeploys
-        user: github-actions
-        deploymentName: deployment

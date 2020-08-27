@@ -1,5 +1,5 @@
 name: 'kubernetes-canary-action'
-description: 'An action to handle kubectl output parsing for canary deploys and rollbacks'
+description: 'An action to handle kubectl interaction for canary deploys and deploy lock/unlock'
 author: 'Smartly.io'
 inputs:
   # Expects to be pre-configured with smartlyio/kubernetes-auth-token@v1
