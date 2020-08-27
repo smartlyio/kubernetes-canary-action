@@ -52,8 +52,8 @@ jobs:
         uses: smartlyio/kubernetes-auth-action@v1
         with:
           kubernetesClusterDomain: my-kubernetes-server.example.com
-          kubernetesContext: kube-prod
-          kubernetesNamespace: my-service-name
+          kubernetesContext: test-context
+          kubernetesNamespace: test-service
       - name: Check if deployment is locked
         uses: smartlyio/kubernetes-canary-action@v1
         with: 
