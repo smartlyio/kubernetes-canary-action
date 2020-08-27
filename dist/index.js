@@ -792,7 +792,7 @@ function isLocked(kubernetesContext, serviceName) {
             '--selector=canary!=true',
             '--no-headers',
             '-o',
-            'custom-columns="NAME:.spec.containers[*].image"'
+            'custom-columns=NAME:.spec.containers[*].image'
         ]);
         const images = kubectl_1.uniq(kubectl_1.stringToArray(imagesRaw).filter(value => {
             return imageRegex.test(value);
