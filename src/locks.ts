@@ -20,7 +20,7 @@ export async function isLocked(
     '--selector=canary!=true',
     '--no-headers',
     '-o',
-    'custom-columns="NAME:.spec.containers[*].image"'
+    'custom-columns=NAME:.spec.containers[*].image'
   ])
   const images = uniq(
     stringToArray(imagesRaw).filter(value => {
