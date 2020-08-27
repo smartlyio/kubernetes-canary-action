@@ -11,7 +11,7 @@ if [[ "$1" == "get" ]]; then
     if [[ "$2" == "deployments" ]]; then
         echo -en "<none>\n<none>\n"
     elif [[ "$2" == "pods" ]]; then
-        echo -en "prof.smartly.af/test-service:abc123\n"
+        echo -en "prod.smartly.af/test-service:abc123\n"
     fi
 elif [[ "$1" == "rollout" ]]; then
     if [[ "$2" == "history" ]]; then
