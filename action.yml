@@ -1,11 +1,22 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'kubernetes-canary-action'
+description: 'An action to handle kubectl output parsing for canary deploys and rollbacks'
+author: 'Smartly.io'
 inputs:
-  milliseconds: # change this
+  # Expects to be pre-configured with smartlyio/kubernetes-auth-token@v1
+  kubernetesContext:
+    description: 'Kubernetes context name. Usually the name of the cluster, but can be random.'
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+  serviceName:
+    description: 'Name of the service'
+    required: true
+  command:
+    description: 'Canary support command to run. One of [isLocked]'
+    required: true
+outputs:
+  CURRENT_IMAGE_SHA:
+    description: 'Current docker image tag running in the cluster'
+  LOCKED:
+    description: 'Is deployment currently locked [true/false]'
 runs:
   using: 'node12'
   main: 'dist/index.js'
