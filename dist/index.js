@@ -92,6 +92,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(186));
 const locks_1 = __webpack_require__(171);
+const rollback_1 = __webpack_require__(697);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -99,6 +100,7 @@ function run() {
                 required: true
             });
             const serviceName = core.getInput('serviceName', { required: true });
+            const deploymentName = core.getInput('deploymentName');
             const command = core.getInput('command', { required: true });
             const user = core.getInput('user') || 'unknown';
             if (command === 'isLocked') {
@@ -109,6 +111,9 @@ function run() {
             }
             else if (command === 'unlock') {
                 yield locks_1.unlock(kubernetesContext, serviceName);
+            }
+            else if (command === 'listRecentDeploys') {
+                yield rollback_1.listRecentDeploys(kubernetesContext, serviceName, deploymentName);
             }
             else {
                 throw new Error(`Command "${command}" is not implemented`);
@@ -1631,6 +1636,107 @@ module.exports = require("path");
 /***/ (function(module) {
 
 module.exports = require("util");
+
+/***/ }),
+
+/***/ 697:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.listRecentDeploys = exports.formatDeploysList = void 0;
+const core = __importStar(__webpack_require__(186));
+const kubectl_1 = __webpack_require__(334);
+function formatDeploysList(serviceName, deploymentName, deployments) {
+    let message = `**Most recent ${serviceName} deploys:**\n\n`;
+    let previousDeployment;
+    for (const deployment of deployments) {
+        if (previousDeployment) {
+            const githubUrl = `https://github.com/smartlyio/${serviceName}/compare/${deployment.revision}..${previousDeployment.revision}`;
+            const deploymentDetail = `\
+${deployment.at} \
+${deployment.revision} \
+[GitHub](${githubUrl})  \
+${deployment.deployer}
+`;
+            message += deploymentDetail;
+        }
+        previousDeployment = deployment;
+    }
+    message += `\nExecute rollback with \`hubot kube-gha-rollback ${serviceName} <revision>\``;
+    return message;
+}
+exports.formatDeploysList = formatDeploysList;
+function listRecentDeploys(kubernetesContext, serviceName, deploymentName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const deploymentsRaw = yield kubectl_1.runKubectl(kubernetesContext, [
+            'rollout',
+            'history',
+            'deployments',
+            deploymentName
+        ]);
+        const historyItemRegexp = /^([0-9]+)\s+(.*)$/;
+        const deployments = kubectl_1.stringToArray(deploymentsRaw)
+            .filter(item => {
+            return historyItemRegexp.test(item);
+        })
+            .map((line) => {
+            const match = line.trim().match(historyItemRegexp);
+            if (match) {
+                const [, revision, annotation] = match;
+                const parts = annotation.split(',');
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const deploymentInfo = {
+                    id: parseInt(revision)
+                };
+                for (const part of parts) {
+                    const [key, value] = part.split('=');
+                    deploymentInfo[key] = value;
+                }
+                return deploymentInfo;
+            }
+            else {
+                throw new Error(`Line "${line}" didn't match regex "${historyItemRegexp}". This is not expeted!`);
+            }
+        })
+            .reverse();
+        core.info(`Found ${deployments.length} previous deployments`);
+        const deploymentListMessage = formatDeploysList(serviceName, deploymentName, deployments);
+        core.info(deploymentListMessage);
+        core.setOutput('SLACK_NOTIFICATION_MESSAGE', deploymentListMessage);
+    });
+}
+exports.listRecentDeploys = listRecentDeploys;
+
 
 /***/ }),
 

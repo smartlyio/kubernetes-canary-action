@@ -29,3 +29,39 @@ jobs:
             echo "Run `npm run-script package` and commit the changes."
             exit 1
         fi
+  test: # make sure the action works on a clean machine without building
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Mock the kubectl binary
+      run: |
+        export PATH="$PATH"
+        export PATH="$(pwd)/__tests__/bin${PATH:+:${PATH}}"
+        echo ::set-env name=PATH::"${PATH}"
+    - name: Check if deployment is locked
+      uses: ./
+      with: 
+        serviceName: test-service
+        kubernetesContext: test-context
+        command: isLocked
+    - name: Unlock deployments
+      uses: ./
+      with: 
+        serviceName: test-service
+        kubernetesContext: test-context
+        command: unlock
+    - name: Lock deployments
+      uses: ./
+      with: 
+        serviceName: test-service
+        kubernetesContext: test-context
+        command: lock
+        user: github-actions
+    - name: List recent deployments
+      uses: ./
+      with: 
+        serviceName: test-service
+        kubernetesContext: test-context
+        command: listRecentDeploys
+        user: github-actions
+        deploymentName: deployment
