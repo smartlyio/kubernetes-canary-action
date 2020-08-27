@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo "kubectl run with arguments:" "$@" >/dev/stderr
