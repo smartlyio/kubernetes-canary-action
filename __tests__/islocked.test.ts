@@ -40,18 +40,17 @@ ${image}
 ${image}
 ${image}
 ${image}
-`;
+`
     const runKubectlMock = mocked(runKubectl)
-    runKubectlMock
-      .mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return podsStdout
-        }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+    runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
+      const baseCommand = command.slice(0, 2).join(' ')
+      if (baseCommand === 'get deployments') {
+        return deploymentsStdout
+      } else if (baseCommand === 'get pods') {
+        return podsStdout
+      }
+      throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
+    })
 
     await isLocked('context', 'serviceName')
 
@@ -79,18 +78,17 @@ ${image}
 ${image}
 ${image}
 prod.smartly.af/serviceName:567def
-`;
+`
     const runKubectlMock = mocked(runKubectl)
-    runKubectlMock
-      .mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return podsStdout
-        }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+    runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
+      const baseCommand = command.slice(0, 2).join(' ')
+      if (baseCommand === 'get deployments') {
+        return deploymentsStdout
+      } else if (baseCommand === 'get pods') {
+        return podsStdout
+      }
+      throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
+    })
 
     await isLocked('context', 'serviceName')
 
@@ -120,18 +118,17 @@ ${image}
 ${image}
 ${image}
 ${image}
-`;
+`
     const runKubectlMock = mocked(runKubectl)
-    runKubectlMock
-      .mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return podsStdout
-        }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+    runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
+      const baseCommand = command.slice(0, 2).join(' ')
+      if (baseCommand === 'get deployments') {
+        return deploymentsStdout
+      } else if (baseCommand === 'get pods') {
+        return podsStdout
+      }
+      throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
+    })
 
     await isLocked('context', 'serviceName')
 
@@ -148,14 +145,13 @@ ${image}
   test('no deployments', async () => {
     const deploymentsStdout = '\n'
     const runKubectlMock = mocked(runKubectl)
-    runKubectlMock
-      .mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+    runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
+      const baseCommand = command.slice(0, 2).join(' ')
+      if (baseCommand === 'get deployments') {
+        return deploymentsStdout
+      }
+      throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
+    })
 
     await isLocked('context', 'serviceName')
 
@@ -177,14 +173,13 @@ true
 <none>
 `
     const runKubectlMock = mocked(runKubectl)
-    runKubectlMock
-      .mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+    runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
+      const baseCommand = command.slice(0, 2).join(' ')
+      if (baseCommand === 'get deployments') {
+        return deploymentsStdout
+      }
+      throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
+    })
 
     await isLocked('context', 'serviceName')
 
