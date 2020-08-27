@@ -1,3 +1,5 @@
 #!/bin/bash
 
-echo "kubectl run with arguments:" "$@" >/dev/stderr
+echoerr() { printf "%s\n" "$*" >&2; }
+
+echoerr "kubectl run with arguments:" "$@"
