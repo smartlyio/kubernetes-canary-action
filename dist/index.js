@@ -811,7 +811,6 @@ function isLocked(kubernetesContext, serviceName) {
         }
         if (deployLocks.length === 1 && deployLocks[0] === '<none>') {
             let locked = false;
-            core.info(`Images matching query: ${images}`);
             if (images.length === 0) {
                 core.warning('Zero app image revisions found to be running. This is an unexpected result, aborting canary deploy.');
                 locked = true;
