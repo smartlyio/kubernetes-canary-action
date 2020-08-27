@@ -12,6 +12,11 @@ inputs:
   command:
     description: 'Canary support command to run. One of [isLocked]'
     required: true
+outputs:
+  CURRENT_IMAGE_SHA:
+    description: 'Current docker image tag running in the cluster'
+  LOCKED:
+    description: 'Is deployment currently locked [true/false]'
 runs:
   using: 'node12'
   main: 'dist/index.js'
