@@ -20,7 +20,7 @@ This will be used to provide functionality like:
 | kubernetesContext | | yes | Kubernetes context name. Usually the name of the cluster, but can be random. |
 | serviceName | | yes | Name of the kubernetes service to operate on. |
 | deploymentName | | no | Name of the deployment within service to operate rollbacks on |
-| command | | yes | Canary support command to run. One of `[lock|unlock|isLocked]`. |
+| command | | yes | Canary support command to run. One of `[lock|unlock|isLocked|listRecentDeploys]`. |
 | user | | no | User locking the deployment.  Only used in `lock` command. |
 
 ## Outputs

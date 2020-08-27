@@ -13,7 +13,7 @@ inputs:
     description: 'Name of the deployment within service to operate rollbacks on'
     required: false
   command:
-    description: 'Canary support command to run. One of [lock|unlock|isLocked]'
+    description: 'Canary support command to run. One of [lock|unlock|isLocked|listRecentDeploys]'
     required: true
   user:
     description: 'User locking the deployment'
