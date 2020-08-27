@@ -91,7 +91,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(186));
-const islocked_1 = __webpack_require__(519);
+const locks_1 = __webpack_require__(171);
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -100,8 +100,15 @@ function run() {
             });
             const serviceName = core.getInput('serviceName', { required: true });
             const command = core.getInput('command', { required: true });
+            const user = core.getInput('user') || 'unknown';
             if (command === 'isLocked') {
-                yield islocked_1.isLocked(kubernetesContext, serviceName);
+                yield locks_1.isLocked(kubernetesContext, serviceName);
+            }
+            else if (command === 'lock') {
+                yield locks_1.lock(kubernetesContext, serviceName, user);
+            }
+            else if (command === 'unlock') {
+                yield locks_1.unlock(kubernetesContext, serviceName);
             }
             else {
                 throw new Error(`Command "${command}" is not implemented`);
@@ -728,6 +735,124 @@ class ExecState extends events.EventEmitter {
     }
 }
 //# sourceMappingURL=toolrunner.js.map
+
+/***/ }),
+
+/***/ 171:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.unlock = exports.lock = exports.isLocked = void 0;
+const core = __importStar(__webpack_require__(186));
+const kubectl_1 = __webpack_require__(334);
+function isLocked(kubernetesContext, serviceName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const deployLocksRaw = yield kubectl_1.runKubectl(kubernetesContext, [
+            'get',
+            'deployments',
+            '--no-headers',
+            '-o',
+            'custom-columns=NAME:.metadata.labels.deploy-lock'
+        ]);
+        const deployLocks = kubectl_1.uniq(kubectl_1.stringToArray(deployLocksRaw));
+        if (deployLocks.length === 1 && deployLocks[0] === '<none>') {
+            let locked = false;
+            const imagesRaw = yield kubectl_1.runKubectl(kubernetesContext, [
+                'get',
+                'pods',
+                '--selector=canary!=true',
+                '--no-headers',
+                '-o',
+                'custom-columns="NAME:.spec.containers[*].image"'
+            ]);
+            const imageRegex = new RegExp(`^prod.smartly.af/${serviceName}:(.*)`);
+            const images = kubectl_1.uniq(kubectl_1.stringToArray(imagesRaw).filter(value => {
+                return imageRegex.test(value);
+            }));
+            core.info(`Images matching query: ${images}`);
+            if (images.length === 1) {
+                const match = images[0].match(imageRegex);
+                if (match) {
+                    const [, tag] = match;
+                    core.setOutput('CURRENT_IMAGE_SHA', tag);
+                }
+                else {
+                    // Shouldn't ever get here; we're here because the image regex already matched some items
+                    throw new Error(`Failed to extract tag from image tag ${images[0]} with regex "${imageRegex}"`);
+                }
+            }
+            else if (images.length === 0) {
+                core.warning('Zero app image revisions found to be running. This is an unexpected result, aborting canary deploy.');
+                locked = true;
+            }
+            else {
+                core.warning('More than one app image revision running. Canary deploy would modify non-canary pods. Not safe to proceed.');
+                locked = true;
+            }
+            core.setOutput('LOCKED', locked.toString());
+        }
+        else {
+            core.setOutput('LOCKED', 'true');
+        }
+    });
+}
+exports.isLocked = isLocked;
+function lock(kubernetesContext, serviceName, user) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield kubectl_1.runKubectl(kubernetesContext, [
+            'label',
+            'deployments',
+            '--all',
+            '--overwrite=true',
+            `deploy-lock=${user}`
+        ]);
+        core.info(`${serviceName} deploys locked by user ${user}`);
+    });
+}
+exports.lock = lock;
+function unlock(kubernetesContext, serviceName) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield kubectl_1.runKubectl(kubernetesContext, [
+            'label',
+            'deployments',
+            '--all',
+            'deploy-lock-'
+        ]);
+        core.info(`${serviceName} deploys unlocked`);
+    });
+}
+exports.unlock = unlock;
+
 
 /***/ }),
 
@@ -1485,99 +1610,6 @@ function exec(commandLine, args, options) {
 }
 exports.exec = exec;
 //# sourceMappingURL=exec.js.map
-
-/***/ }),
-
-/***/ 519:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.isLocked = void 0;
-const core = __importStar(__webpack_require__(186));
-const kubectl_1 = __webpack_require__(334);
-function isLocked(kubernetesContext, serviceName) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const deployLocksRaw = yield kubectl_1.runKubectl(kubernetesContext, [
-            'get',
-            'deployments',
-            '--no-headers',
-            '-o',
-            'custom-columns=NAME:.metadata.labels.deploy-lock'
-        ]);
-        const deployLocks = kubectl_1.uniq(kubectl_1.stringToArray(deployLocksRaw));
-        if (deployLocks.length === 1 && deployLocks[0] === '<none>') {
-            let locked = false;
-            const imagesRaw = yield kubectl_1.runKubectl(kubernetesContext, [
-                'get',
-                'pods',
-                '--selector=canary!=true',
-                '--no-headers',
-                '-o',
-                'custom-columns="NAME:.spec.containers[*].image"'
-            ]);
-            const imageRegex = new RegExp(`^prod.smartly.af/${serviceName}:(.*)`);
-            const images = kubectl_1.uniq(kubectl_1.stringToArray(imagesRaw).filter(value => {
-                return imageRegex.test(value);
-            }));
-            core.info(`Images matching query: ${images}`);
-            if (images.length === 1) {
-                const match = images[0].match(imageRegex);
-                if (match) {
-                    const [, tag] = match;
-                    core.setOutput('CURRENT_IMAGE_SHA', tag);
-                }
-                else {
-                    // Shouldn't ever get here; we're here because the image regex already matched some items
-                    throw new Error(`Failed to extract tag from image tag ${images[0]} with regex "${imageRegex}"`);
-                }
-            }
-            else if (images.length === 0) {
-                core.warning('Zero app image revisions found to be running. This is an unexpected result, aborting canary deploy.');
-                locked = true;
-            }
-            else {
-                core.warning('More than one app image revision running. Canary deploy would modify non-canary pods. Not safe to proceed.');
-                locked = true;
-            }
-            core.setOutput('LOCKED', locked.toString());
-        }
-        else {
-            core.setOutput('LOCKED', 'true');
-        }
-    });
-}
-exports.isLocked = isLocked;
-
 
 /***/ }),
 

@@ -10,8 +10,11 @@ inputs:
     description: 'Name of the service'
     required: true
   command:
-    description: 'Canary support command to run. One of [isLocked]'
+    description: 'Canary support command to run. One of [lock|unlock|isLocked]'
     required: true
+  user:
+    description: 'User locking the deployment'
+    required: false
 outputs:
   CURRENT_IMAGE_SHA:
     description: 'Current docker image tag running in the cluster'

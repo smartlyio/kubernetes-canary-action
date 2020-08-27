@@ -1,7 +1,7 @@
 import {setOutput, warning} from '@actions/core'
 import {mocked} from 'ts-jest/utils'
 import {runKubectl} from '../src/kubectl'
-import {isLocked} from '../src/islocked'
+import {lock, unlock, isLocked} from '../src/locks'
 
 jest.mock('@actions/core')
 jest.mock('../src/kubectl', () => {
@@ -17,6 +17,7 @@ jest.mock('../src/kubectl', () => {
 const OLD_ENV = process.env
 beforeEach(() => {
   process.env = {...OLD_ENV}
+  mocked(runKubectl).mockClear()
 })
 
 afterEach(() => {
@@ -189,5 +190,51 @@ true
 
     const warningMock = mocked(warning)
     expect(warningMock.mock.calls.length).toBe(0)
+  })
+})
+
+describe('lock', () => {
+  test('runs kubectl', async () => {
+    const context = 'context'
+    const service = 'service'
+    const user = 'user'
+
+    const runKubectlMock = mocked(runKubectl)
+    // The mocks in other tests seem to be global?!?
+    runKubectlMock.mockImplementation(
+      async (c: string, cmd: string[]) => 'output'
+    )
+
+    await lock(context, service, user)
+
+    expect(runKubectlMock).toHaveBeenCalledWith(context, [
+      'label',
+      'deployments',
+      '--all',
+      '--overwrite=true',
+      `deploy-lock=${user}`
+    ])
+  })
+})
+
+describe('unlock', () => {
+  test('runs kubectl', async () => {
+    const context = 'context'
+    const service = 'service'
+
+    const runKubectlMock = mocked(runKubectl)
+    // The mocks in other tests seem to be global?!?
+    runKubectlMock.mockImplementation(
+      async (c: string, cmd: string[]) => 'output'
+    )
+
+    await unlock(context, service)
+
+    expect(runKubectlMock).toHaveBeenCalledWith(context, [
+      'label',
+      'deployments',
+      '--all',
+      'deploy-lock-'
+    ])
   })
 })

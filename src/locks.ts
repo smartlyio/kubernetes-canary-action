@@ -58,3 +58,31 @@ export async function isLocked(
     core.setOutput('LOCKED', 'true')
   }
 }
+
+export async function lock(
+  kubernetesContext: string,
+  serviceName: string,
+  user: string
+): Promise<void> {
+  await runKubectl(kubernetesContext, [
+    'label',
+    'deployments',
+    '--all',
+    '--overwrite=true',
+    `deploy-lock=${user}`
+  ])
+  core.info(`${serviceName} deploys locked by user ${user}`)
+}
+
+export async function unlock(
+  kubernetesContext: string,
+  serviceName: string
+): Promise<void> {
+  await runKubectl(kubernetesContext, [
+    'label',
+    'deployments',
+    '--all',
+    'deploy-lock-'
+  ])
+  core.info(`${serviceName} deploys unlocked`)
+}
