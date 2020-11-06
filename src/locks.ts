@@ -23,9 +23,12 @@ export async function isLocked(
     'custom-columns=NAME:.spec.containers[*].image'
   ])
   const images = uniq(
-    stringToArray(imagesRaw).filter(value => {
-      return imageRegex.test(value)
-    })
+    stringToArray(imagesRaw)
+      .map(image => stringToArray(image, ','))
+      .flat()
+      .filter(value => {
+        return imageRegex.test(value)
+      })
   )
   core.info(`Images matching query: ${images}`)
   if (images.length === 1) {
