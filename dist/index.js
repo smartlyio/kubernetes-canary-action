@@ -131,7 +131,10 @@ function isLocked(kubernetesContext, serviceName) {
             '-o',
             'custom-columns=NAME:.spec.containers[*].image'
         ]);
-        const images = kubectl_1.uniq(kubectl_1.stringToArray(imagesRaw).filter(value => {
+        const images = kubectl_1.uniq(kubectl_1.stringToArray(imagesRaw)
+            .map(image => kubectl_1.stringToArray(image, ','))
+            .flat()
+            .filter(value => {
             return imageRegex.test(value);
         }));
         core.info(`Images matching query: ${images}`);
