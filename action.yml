@@ -27,7 +27,8 @@ inputs:
       deployment version; production mode skips this to allow
       deploying a new version even if previous rollout is stuck, or if
       no version is deployed at all.
-    default: false
+    required: false
+    default: "false"
 outputs:
   CURRENT_IMAGE_SHA:
     description: 'Current docker image tag running in the cluster'
