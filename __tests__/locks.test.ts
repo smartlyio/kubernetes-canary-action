@@ -26,7 +26,7 @@ afterEach(() => {
 
 describe('test isLocked', () => {
   describe('canary deployments', () => {
-    const isProduction = false;
+    const isProduction = false
     test('no locked deployments, one image version', async () => {
       const deploymentsStdout = `<none>
 <none>
@@ -45,15 +45,17 @@ ${image}
 ${image}
 `
       const runKubectlMock = mocked(runKubectl)
-      runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return podsStdout
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return podsStdout
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
         }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+      )
 
       await isLocked('context', 'serviceName', isProduction)
 
@@ -82,15 +84,17 @@ ${image}
 ${image},otherimage:latest
 `
       const runKubectlMock = mocked(runKubectl)
-      runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return podsStdout
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return podsStdout
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
         }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+      )
 
       await isLocked('context', 'serviceName', isProduction)
 
@@ -120,15 +124,17 @@ ${image}
 prod.smartly.af/serviceName:567def
 `
       const runKubectlMock = mocked(runKubectl)
-      runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return podsStdout
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return podsStdout
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
         }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+      )
 
       await isLocked('context', 'serviceName', isProduction)
 
@@ -162,15 +168,17 @@ prod.smartly.af/serviceName:567def
 prod.smartly.af/serviceName:567def,other:latest
 `
       const runKubectlMock = mocked(runKubectl)
-      runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return podsStdout
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return podsStdout
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
         }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+      )
 
       await isLocked('context', 'serviceName', isProduction)
 
@@ -181,7 +189,9 @@ prod.smartly.af/serviceName:567def,other:latest
       const warningMock = mocked(warning)
       const calls = warningMock.mock.calls
       expect(calls.length).toBe(1)
-      expect(calls[0][0]).toMatch(/More than one app image.*Not safe to proceed/)
+      expect(calls[0][0]).toMatch(
+        /More than one app image.*Not safe to proceed/
+      )
     })
 
     test('zero app images', async () => {
@@ -202,15 +212,17 @@ ${image}
 ${image}
 `
       const runKubectlMock = mocked(runKubectl)
-      runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return podsStdout
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return podsStdout
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
         }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+      )
 
       await isLocked('context', 'serviceName', isProduction)
 
@@ -227,15 +239,17 @@ ${image}
     test('no deployments', async () => {
       const deploymentsStdout = '\n'
       const runKubectlMock = mocked(runKubectl)
-      runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return ''
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return ''
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
         }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+      )
 
       await isLocked('context', 'serviceName', isProduction)
 
@@ -269,15 +283,17 @@ ${image}
 ${image}
 `
       const runKubectlMock = mocked(runKubectl)
-      runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return podsStdout
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return podsStdout
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
         }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+      )
 
       await isLocked('context', 'serviceName', isProduction)
 
@@ -314,15 +330,17 @@ ${image}
 prod.smartly.af/serviceName:def678
 `
       const runKubectlMock = mocked(runKubectl)
-      runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return podsStdout
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return podsStdout
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
         }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+      )
 
       await isLocked('context', 'serviceName', isProduction)
 
@@ -358,15 +376,17 @@ ${image}
 otherthing:latest,prod.smartly.af/serviceName:def678
 `
       const runKubectlMock = mocked(runKubectl)
-      runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return podsStdout
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return podsStdout
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
         }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+      )
 
       await isLocked('context', 'serviceName', isProduction)
 
@@ -402,15 +422,17 @@ ${image}
 prod.smartly.af/serviceName:def678,otherthing:latest
 `
       const runKubectlMock = mocked(runKubectl)
-      runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return podsStdout
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return podsStdout
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
         }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+      )
 
       await isLocked('context', 'serviceName', isProduction)
 
@@ -425,7 +447,7 @@ prod.smartly.af/serviceName:def678,otherthing:latest
   })
 
   describe('production deployments', () => {
-    const isProduction = true;
+    const isProduction = true
 
     test('no locked deployments, two image versions, multiple containers', async () => {
       const deploymentsStdout = `<none>
@@ -447,15 +469,17 @@ prod.smartly.af/serviceName:567def
 prod.smartly.af/serviceName:567def,other:latest
 `
       const runKubectlMock = mocked(runKubectl)
-      runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return podsStdout
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return podsStdout
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
         }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+      )
 
       await isLocked('context', 'serviceName', isProduction)
 
@@ -487,15 +511,17 @@ ${image}
 ${image}
 `
       const runKubectlMock = mocked(runKubectl)
-      runKubectlMock.mockImplementation(async (_: string, command: string[]) => {
-        const baseCommand = command.slice(0, 2).join(' ')
-        if (baseCommand === 'get deployments') {
-          return deploymentsStdout
-        } else if (baseCommand === 'get pods') {
-          return podsStdout
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return podsStdout
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
         }
-        throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
-      })
+      )
 
       await isLocked('context', 'serviceName', isProduction)
 
