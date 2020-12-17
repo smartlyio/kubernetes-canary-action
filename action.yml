@@ -18,6 +18,16 @@ inputs:
   user:
     description: 'User locking the deployment'
     required: false
+  production:
+    description: >-
+      Pass 'true' to skip check for safe canary deployments.  Applies
+      only to the isLocked command.
+
+      The default strictly checks that there is exactly one active
+      deployment version; production mode skips this to allow
+      deploying a new version even if previous rollout is stuck, or if
+      no version is deployed at all.
+    default: false
 outputs:
   CURRENT_IMAGE_SHA:
     description: 'Current docker image tag running in the cluster'
