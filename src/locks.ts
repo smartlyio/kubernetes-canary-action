@@ -47,16 +47,20 @@ export async function isLocked(
 
   if (deployLocks.length === 1 && deployLocks[0] === '<none>') {
     let locked = false
-    if (!isProduction && images.length === 0) {
-      core.warning(
-        'Zero app image revisions found to be running. This is an unexpected result, aborting canary deploy.'
-      )
-      locked = true
-    } else if (!isProduction && images.length > 1) {
-      core.warning(
-        'More than one app image revision running. Canary deploy would modify non-canary pods. Not safe to proceed.'
-      )
-      locked = true
+    if (images.length === 0) {
+      let warning = 'Zero app image revisions found to be running.'
+      if (!isProduction) {
+        warning = `${warning} This is an unexpected result, aborting canary deploy.`
+        locked = true
+      }
+      core.warning(warning)
+    } else if (images.length > 1) {
+      let warning = 'More than one app image revision running.'
+      if (!isProduction) {
+        warning = `${warning} Canary deploy would modify non-canary pods. Not safe to proceed.`
+        locked = true
+      }
+      core.warning(warning)
     }
     core.setOutput('LOCKED', locked.toString())
   } else {
