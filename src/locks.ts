@@ -3,7 +3,8 @@ import {runKubectl, stringToArray, uniq} from './kubectl'
 
 export async function isLocked(
   kubernetesContext: string,
-  serviceName: string
+  serviceName: string,
+  isProduction: boolean
 ): Promise<void> {
   const deployLocksRaw = await runKubectl(kubernetesContext, [
     'get',
@@ -47,15 +48,19 @@ export async function isLocked(
   if (deployLocks.length === 1 && deployLocks[0] === '<none>') {
     let locked = false
     if (images.length === 0) {
-      core.warning(
-        'Zero app image revisions found to be running. This is an unexpected result, aborting canary deploy.'
-      )
-      locked = true
+      let warning = 'Zero app image revisions found to be running.'
+      if (!isProduction) {
+        warning = `${warning} This is an unexpected result, aborting canary deploy.`
+        locked = true
+      }
+      core.warning(warning)
     } else if (images.length > 1) {
-      core.warning(
-        'More than one app image revision running. Canary deploy would modify non-canary pods. Not safe to proceed.'
-      )
-      locked = true
+      let warning = 'More than one app image revision running.'
+      if (!isProduction) {
+        warning = `${warning} Canary deploy would modify non-canary pods. Not safe to proceed.`
+        locked = true
+      }
+      core.warning(warning)
     }
     core.setOutput('LOCKED', locked.toString())
   } else {

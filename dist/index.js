@@ -112,7 +112,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.unlock = exports.lock = exports.isLocked = void 0;
 const core = __importStar(__webpack_require__(186));
 const kubectl_1 = __webpack_require__(334);
-function isLocked(kubernetesContext, serviceName) {
+function isLocked(kubernetesContext, serviceName, isProduction) {
     return __awaiter(this, void 0, void 0, function* () {
         const deployLocksRaw = yield kubectl_1.runKubectl(kubernetesContext, [
             'get',
@@ -152,12 +152,20 @@ function isLocked(kubernetesContext, serviceName) {
         if (deployLocks.length === 1 && deployLocks[0] === '<none>') {
             let locked = false;
             if (images.length === 0) {
-                core.warning('Zero app image revisions found to be running. This is an unexpected result, aborting canary deploy.');
-                locked = true;
+                let warning = 'Zero app image revisions found to be running.';
+                if (!isProduction) {
+                    warning = `${warning} This is an unexpected result, aborting canary deploy.`;
+                    locked = true;
+                }
+                core.warning(warning);
             }
             else if (images.length > 1) {
-                core.warning('More than one app image revision running. Canary deploy would modify non-canary pods. Not safe to proceed.');
-                locked = true;
+                let warning = 'More than one app image revision running.';
+                if (!isProduction) {
+                    warning = `${warning} Canary deploy would modify non-canary pods. Not safe to proceed.`;
+                    locked = true;
+                }
+                core.warning(warning);
             }
             core.setOutput('LOCKED', locked.toString());
         }
@@ -229,8 +237,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.toBoolean = void 0;
 const core = __importStar(__webpack_require__(186));
 const locks_1 = __webpack_require__(171);
+function toBoolean(value) {
+    const regexp = new RegExp(/^(true|1|on|yes)$/i);
+    return regexp.test(value.trim());
+}
+exports.toBoolean = toBoolean;
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -240,8 +254,9 @@ function run() {
             const serviceName = core.getInput('serviceName', { required: true });
             const command = core.getInput('command', { required: true });
             const user = core.getInput('user') || 'unknown';
+            const isProduction = toBoolean(core.getInput('production'));
             if (command === 'isLocked') {
-                yield locks_1.isLocked(kubernetesContext, serviceName);
+                yield locks_1.isLocked(kubernetesContext, serviceName, isProduction);
             }
             else if (command === 'lock') {
                 yield locks_1.lock(kubernetesContext, serviceName, user);
