@@ -149,7 +149,12 @@ function isLocked(kubernetesContext, serviceName, isProduction) {
                 throw new Error(`Failed to extract tag from image tag ${images[0]} with regex "${imageRegex}"`);
             }
         }
-        if (deployLocks.length === 1 && deployLocks[0] === '<none>') {
+        if (deployLocks.length === 0 && isProduction) {
+            // Allow a production deployment if the namespace is empty
+            core.info('No deployments found');
+            core.setOutput('LOCKED', 'false');
+        }
+        else if (deployLocks.length === 1 && deployLocks[0] === '<none>') {
             let locked = false;
             if (images.length === 0) {
                 let warning = 'Zero app image revisions found to be running.';
