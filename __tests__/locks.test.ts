@@ -449,6 +449,33 @@ prod.smartly.af/serviceName:def678,otherthing:latest
   describe('production deployments', () => {
     const isProduction = true
 
+    test('no deployments (new namespace)', async () => {
+      const deploymentsStdout = ''
+      const podsStdout = ''
+      const runKubectlMock = mocked(runKubectl)
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return podsStdout
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
+        }
+      )
+
+      await isLocked('context', 'serviceName', isProduction)
+
+      const setOutputMock = mocked(setOutput)
+      expect(setOutputMock.mock.calls.length).toBe(1)
+      expect(setOutputMock).toHaveBeenCalledWith('LOCKED', false.toString())
+
+      const warningMock = mocked(warning)
+      const calls = warningMock.mock.calls
+      expect(calls.length).toBe(0)
+    })
+
     test('no locked deployments, two image versions, multiple containers', async () => {
       const deploymentsStdout = `<none>
 <none>
