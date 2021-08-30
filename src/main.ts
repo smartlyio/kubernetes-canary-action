@@ -1,5 +1,5 @@
 import * as core from '@actions/core'
-import {lock, unlock, isLocked} from './locks'
+import {isLocked, lock, unlock} from './locks'
 
 export function toBoolean(value: string): boolean {
   const regexp = new RegExp(/^(true|1|on|yes)$/i)
