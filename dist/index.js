@@ -113,16 +113,16 @@ const core = __importStar(__nccwpck_require__(186));
 const kubectl_1 = __nccwpck_require__(334);
 function isLocked(kubernetesContext, serviceName, isProduction) {
     return __awaiter(this, void 0, void 0, function* () {
-        const deployLocksRaw = yield kubectl_1.runKubectl(kubernetesContext, [
+        const deployLocksRaw = yield (0, kubectl_1.runKubectl)(kubernetesContext, [
             'get',
             'deployments',
             '--no-headers',
             '-o',
             'custom-columns=NAME:.metadata.labels.deploy-lock'
         ]);
-        const deployLocks = kubectl_1.uniq(kubectl_1.stringToArray(deployLocksRaw));
+        const deployLocks = (0, kubectl_1.uniq)((0, kubectl_1.stringToArray)(deployLocksRaw));
         const imageRegex = new RegExp(`^prod.smartly.af/${serviceName}:(.*)`);
-        const imagesRaw = yield kubectl_1.runKubectl(kubernetesContext, [
+        const imagesRaw = yield (0, kubectl_1.runKubectl)(kubernetesContext, [
             'get',
             'pods',
             '--selector=canary!=true',
@@ -130,8 +130,8 @@ function isLocked(kubernetesContext, serviceName, isProduction) {
             '-o',
             'custom-columns=NAME:.spec.containers[*].image'
         ]);
-        const images = kubectl_1.uniq(kubectl_1.stringToArray(imagesRaw)
-            .map(image => kubectl_1.stringToArray(image, ','))
+        const images = (0, kubectl_1.uniq)((0, kubectl_1.stringToArray)(imagesRaw)
+            .map(image => (0, kubectl_1.stringToArray)(image, ','))
             .flat()
             .filter(value => {
             return imageRegex.test(value);
@@ -181,7 +181,7 @@ function isLocked(kubernetesContext, serviceName, isProduction) {
 exports.isLocked = isLocked;
 function lock(kubernetesContext, serviceName, user) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield kubectl_1.runKubectl(kubernetesContext, [
+        yield (0, kubectl_1.runKubectl)(kubernetesContext, [
             'label',
             'deployments',
             '--all',
@@ -194,7 +194,7 @@ function lock(kubernetesContext, serviceName, user) {
 exports.lock = lock;
 function unlock(kubernetesContext, serviceName) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield kubectl_1.runKubectl(kubernetesContext, [
+        yield (0, kubectl_1.runKubectl)(kubernetesContext, [
             'label',
             'deployments',
             '--all',
@@ -260,20 +260,20 @@ function run() {
             const user = core.getInput('user') || 'unknown';
             const isProduction = toBoolean(core.getInput('production'));
             if (command === 'isLocked') {
-                yield locks_1.isLocked(kubernetesContext, serviceName, isProduction);
+                yield (0, locks_1.isLocked)(kubernetesContext, serviceName, isProduction);
             }
             else if (command === 'lock') {
-                yield locks_1.lock(kubernetesContext, serviceName, user);
+                yield (0, locks_1.lock)(kubernetesContext, serviceName, user);
             }
             else if (command === 'unlock') {
-                yield locks_1.unlock(kubernetesContext, serviceName);
+                yield (0, locks_1.unlock)(kubernetesContext, serviceName);
             }
             else {
                 throw new Error(`Command "${command}" is not implemented`);
             }
         }
         catch (error) {
-            core.setFailed(error.message);
+            core.setFailed(`${error}`);
         }
     });
 }
