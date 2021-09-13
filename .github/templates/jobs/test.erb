@@ -1,0 +1,31 @@
+test:
+  runs-on: <%= ubuntu_version %>
+  steps:
+  - uses: actions/checkout@v2
+  - name: "Build action for test"
+    run: |
+      npm install
+      npm run all
+      git clean -fXd
+  - name: Mock the kubectl binary
+    run: |
+      echo "$(pwd)/__tests__/bin" >> "$GITHUB_PATH"
+  - name: Check if deployment is locked
+    uses: ./
+    with:
+      serviceName: test-service
+      kubernetesContext: test-context
+      command: isLocked
+  - name: Unlock deployments
+    uses: ./
+    with:
+      serviceName: test-service
+      kubernetesContext: test-context
+      command: unlock
+  - name: Lock deployments
+    uses: ./
+    with:
+      serviceName: test-service
+      kubernetesContext: test-context
+      command: lock
+      user: github-actions
