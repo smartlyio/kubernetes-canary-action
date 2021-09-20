@@ -1,6 +1,6 @@
 {
   "name": "kubernetes-canary-action",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "private": true,
   "description": "An action to handle kubectl output parsing for canary deploys and rollbacks",
   "main": "lib/main.js",
