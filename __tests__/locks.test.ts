@@ -66,6 +66,45 @@ ${image}
       expect(calls[1]).toEqual(['LOCKED', false.toString()])
     })
 
+    test('no locked deployments, one image version cache.smartly.af', async () => {
+      const deploymentsStdout = `<none>
+<none>
+<none>
+`
+      const gitSha = 'abc123'
+      const image = `cache.smartly.af/serviceName:${gitSha}`
+      const podsStdout = `${image}
+${image}
+${image}
+${image}
+${image}
+${image}
+${image}
+${image}
+${image}
+`
+      const runKubectlMock = mocked(runKubectl)
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return podsStdout
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
+        }
+      )
+
+      await isLocked('context', 'serviceName', isProduction)
+
+      const setOutputMock = mocked(setOutput)
+      const calls = setOutputMock.mock.calls
+      expect(calls.length).toEqual(2)
+      expect(calls[0]).toEqual(['CURRENT_IMAGE_SHA', gitSha])
+      expect(calls[1]).toEqual(['LOCKED', false.toString()])
+    })
+
     test('no locked deployments, one image version multiple containers', async () => {
       const deploymentsStdout = `<none>
 <none>
