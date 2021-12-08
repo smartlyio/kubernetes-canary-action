@@ -14,7 +14,7 @@ export async function isLocked(
     'custom-columns=NAME:.metadata.labels.deploy-lock'
   ])
   const deployLocks = uniq(stringToArray(deployLocksRaw))
-  const imageRegex = new RegExp(`^prod.smartly.af/${serviceName}:(.*)`)
+  const imageRegex = new RegExp(`^(prod|cache).smartly.af/${serviceName}:(.*)`)
   const imagesRaw = await runKubectl(kubernetesContext, [
     'get',
     'pods',
@@ -35,7 +35,7 @@ export async function isLocked(
   if (images.length === 1) {
     const match = images[0].match(imageRegex)
     if (match) {
-      const [, tag] = match
+      const [, , tag] = match
       core.setOutput('CURRENT_IMAGE_SHA', tag)
     } else {
       // Shouldn't ever get here; we're here because the image regex already matched some items
