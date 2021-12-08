@@ -122,7 +122,7 @@ function isLocked(kubernetesContext, serviceName, isProduction) {
             'custom-columns=NAME:.metadata.labels.deploy-lock'
         ]);
         const deployLocks = (0, kubectl_1.uniq)((0, kubectl_1.stringToArray)(deployLocksRaw));
-        const imageRegex = new RegExp(`^prod.smartly.af/${serviceName}:(.*)`);
+        const imageRegex = new RegExp(`^(prod|cache).smartly.af/${serviceName}:(.*)`);
         const imagesRaw = yield (0, kubectl_1.runKubectl)(kubernetesContext, [
             'get',
             'pods',
@@ -141,7 +141,7 @@ function isLocked(kubernetesContext, serviceName, isProduction) {
         if (images.length === 1) {
             const match = images[0].match(imageRegex);
             if (match) {
-                const [, tag] = match;
+                const [, , tag] = match;
                 core.setOutput('CURRENT_IMAGE_SHA', tag);
             }
             else {
