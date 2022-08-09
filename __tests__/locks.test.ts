@@ -1,5 +1,5 @@
 import {setOutput, warning} from '@actions/core'
-import {mocked} from 'ts-jest/utils'
+import {mocked} from 'jest-mock'
 import {runKubectl} from '../src/kubectl'
 import {lock, unlock, isLocked} from '../src/locks'
 
