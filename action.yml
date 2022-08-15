@@ -35,5 +35,5 @@ outputs:
   LOCKED:
     description: 'Is deployment currently locked [true/false]'
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
