@@ -130,7 +130,7 @@ function isLocked(kubernetesContext, serviceName, isProduction) {
             'custom-columns=NAME:.metadata.labels.deploy-lock'
         ]);
         const deployLocks = (0, kubectl_1.uniq)((0, kubectl_1.stringToArray)(deployLocksRaw));
-        const imageRegex = new RegExp(`^(prod|cache).smartly.af/${serviceName}:(.*)`);
+        const imageRegex = new RegExp(`^(prod|cache).artifactor.ee/${serviceName}:(.*)`);
         const imagesRaw = yield (0, kubectl_1.runKubectl)(kubernetesContext, [
             'get',
             'pods',

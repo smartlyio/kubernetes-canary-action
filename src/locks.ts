@@ -14,7 +14,9 @@ export async function isLocked(
     'custom-columns=NAME:.metadata.labels.deploy-lock'
   ])
   const deployLocks = uniq(stringToArray(deployLocksRaw))
-  const imageRegex = new RegExp(`^(prod|cache).smartly.af/${serviceName}:(.*)`)
+  const imageRegex = new RegExp(
+    `^(prod|cache).artifactor.ee/${serviceName}:(.*)`
+  )
   const imagesRaw = await runKubectl(kubernetesContext, [
     'get',
     'pods',

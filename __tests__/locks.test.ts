@@ -33,7 +33,7 @@ describe('test isLocked', () => {
 <none>
 `
       const gitSha = 'abc123'
-      const image = `prod.smartly.af/serviceName:${gitSha}`
+      const image = `prod.artifactor.ee/serviceName:${gitSha}`
       const podsStdout = `${image}
 ${image}
 ${image}
@@ -66,13 +66,13 @@ ${image}
       expect(calls[1]).toEqual(['LOCKED', false.toString()])
     })
 
-    test('no locked deployments, one image version cache.smartly.af', async () => {
+    test('no locked deployments, one image version cache.artifactor.ee', async () => {
       const deploymentsStdout = `<none>
 <none>
 <none>
 `
       const gitSha = 'abc123'
-      const image = `cache.smartly.af/serviceName:${gitSha}`
+      const image = `cache.artifactor.ee/serviceName:${gitSha}`
       const podsStdout = `${image}
 ${image}
 ${image}
@@ -111,7 +111,7 @@ ${image}
 <none>
 `
       const gitSha = 'abc123'
-      const image = `prod.smartly.af/serviceName:${gitSha}`
+      const image = `prod.artifactor.ee/serviceName:${gitSha}`
       const podsStdout = `${image}
 ${image}
 ${image}
@@ -150,7 +150,7 @@ ${image},otherimage:latest
 <none>
 `
       const gitSha = 'abc123'
-      const image = `prod.smartly.af/serviceName:${gitSha}`
+      const image = `prod.artifactor.ee/serviceName:${gitSha}`
       const podsStdout = `${image}
 ${image}
 ${image}
@@ -160,7 +160,7 @@ ${image}
 ${image}
 ${image}
 ${image}
-prod.smartly.af/serviceName:567def
+prod.artifactor.ee/serviceName:567def
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -193,7 +193,7 @@ prod.smartly.af/serviceName:567def
 <none>
 `
       const gitSha = 'abc123'
-      const image = `prod.smartly.af/serviceName:${gitSha}`
+      const image = `prod.artifactor.ee/serviceName:${gitSha}`
       const podsStdout = `${image}
 ${image}
 ${image}
@@ -203,8 +203,8 @@ ${image}
 ${image}
 ${image}
 ${image},other:1.0.0
-prod.smartly.af/serviceName:567def
-prod.smartly.af/serviceName:567def,other:latest
+prod.artifactor.ee/serviceName:567def
+prod.artifactor.ee/serviceName:567def,other:latest
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -239,7 +239,7 @@ prod.smartly.af/serviceName:567def,other:latest
 <none>
 `
       const gitSha = 'abc123'
-      const image = `prod.smartly.af/otherthing:${gitSha}`
+      const image = `prod.artifactor.ee/otherthing:${gitSha}`
       const podsStdout = `${image}
 ${image}
 ${image}
@@ -310,7 +310,7 @@ true
 <none>
 `
       const gitSha = 'abc123'
-      const image = `prod.smartly.af/serviceName:${gitSha}`
+      const image = `prod.artifactor.ee/serviceName:${gitSha}`
       const podsStdout = `${image}
 ${image}
 ${image}
@@ -356,7 +356,7 @@ true
 <none>
 `
       const gitSha = 'abc123'
-      const image = `prod.smartly.af/serviceName:${gitSha}`
+      const image = `prod.artifactor.ee/serviceName:${gitSha}`
       const podsStdout = `${image}
 ${image}
 ${image}
@@ -366,7 +366,7 @@ ${image}
 ${image}
 ${image}
 ${image}
-prod.smartly.af/serviceName:def678
+prod.artifactor.ee/serviceName:def678
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -402,7 +402,7 @@ true
 <none>
 `
       const gitSha = 'abc123'
-      const image = `prod.smartly.af/serviceName:${gitSha}`
+      const image = `prod.artifactor.ee/serviceName:${gitSha}`
       const podsStdout = `${image}
 ${image}
 ${image}
@@ -412,7 +412,7 @@ ${image}
 ${image}
 ${image}
 ${image}
-otherthing:latest,prod.smartly.af/serviceName:def678
+otherthing:latest,prod.artifactor.ee/serviceName:def678
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -448,7 +448,7 @@ true
 <none>
 `
       const gitSha = 'abc123'
-      const image = `prod.smartly.af/serviceName:${gitSha}`
+      const image = `prod.artifactor.ee/serviceName:${gitSha}`
       const podsStdout = `${image}
 ${image}
 ${image}
@@ -458,7 +458,7 @@ ${image}
 ${image}
 ${image}
 ${image}
-prod.smartly.af/serviceName:def678,otherthing:latest
+prod.artifactor.ee/serviceName:def678,otherthing:latest
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -521,7 +521,7 @@ prod.smartly.af/serviceName:def678,otherthing:latest
 <none>
 `
       const gitSha = 'abc123'
-      const image = `prod.smartly.af/serviceName:${gitSha}`
+      const image = `prod.artifactor.ee/serviceName:${gitSha}`
       const podsStdout = `${image}
 ${image}
 ${image}
@@ -531,8 +531,8 @@ ${image}
 ${image}
 ${image}
 ${image},other:1.0.0
-prod.smartly.af/serviceName:567def
-prod.smartly.af/serviceName:567def,other:latest
+prod.artifactor.ee/serviceName:567def
+prod.artifactor.ee/serviceName:567def,other:latest
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -565,7 +565,7 @@ prod.smartly.af/serviceName:567def,other:latest
 <none>
 `
       const gitSha = 'abc123'
-      const image = `prod.smartly.af/otherthing:${gitSha}`
+      const image = `prod.artifactor.ee/otherthing:${gitSha}`
       const podsStdout = `${image}
 ${image}
 ${image}
