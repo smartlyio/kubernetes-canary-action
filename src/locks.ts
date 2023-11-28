@@ -19,15 +19,17 @@ export async function isLocked(
   )
   const imagesRaw = await runKubectl(kubernetesContext, [
     'get',
-    'deploy',
+    'pods',
     '--selector=canary!=true',
     '--no-headers',
     '-o',
-    'custom-columns=NAME:.spec.template.spec.containers[*].image'
+    'custom-columns=NAME:.spec.containers[*].image,PHASE:.status.phase'
   ])
   const images = uniq(
     stringToArray(imagesRaw)
       .map(image => stringToArray(image, ','))
+      .filter(([, phase]) => phase !== 'Succeeded' && phase !== 'Failed')
+      .map(([image]) => image)
       .flat()
       .filter(value => {
         return imageRegex.test(value)
