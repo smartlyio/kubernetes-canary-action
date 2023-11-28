@@ -66,6 +66,38 @@ ${image}   <none>
       expect(calls[1]).toEqual(['LOCKED', false.toString()])
     })
 
+    test('no locked deployments, one image version, one terminating pod', async () => {
+      const deploymentsStdout = `<none>
+<none>
+<none>
+`
+      const gitSha = 'abc123'
+      const image = `prod.artifactor.ee/serviceName:${gitSha}`
+      const podsStdout = `prod.artifactor.ee/serviceName:abc234   2023-11-28T12:48:16Z
+${image}   <none>
+`
+      const runKubectlMock = mocked(runKubectl)
+      runKubectlMock.mockImplementation(
+        async (_: string, command: string[]) => {
+          const baseCommand = command.slice(0, 2).join(' ')
+          if (baseCommand === 'get deployments') {
+            return deploymentsStdout
+          } else if (baseCommand === 'get pods') {
+            return podsStdout
+          }
+          throw new Error(`Unhandled command in test: "${command.join(' ')}"`)
+        }
+      )
+
+      await isLocked('context', 'serviceName', isProduction)
+
+      const setOutputMock = mocked(setOutput)
+      const calls = setOutputMock.mock.calls
+      expect(calls.length).toEqual(2)
+      expect(calls[0]).toEqual(['CURRENT_IMAGE_SHA', gitSha])
+      expect(calls[1]).toEqual(['LOCKED', false.toString()])
+    })
+
     test('no locked deployments, one image version cache.artifactor.ee', async () => {
       const deploymentsStdout = `<none>
 <none>
