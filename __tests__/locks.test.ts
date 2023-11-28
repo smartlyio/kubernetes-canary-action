@@ -34,15 +34,15 @@ describe('test isLocked', () => {
 `
       const gitSha = 'abc123'
       const image = `prod.artifactor.ee/serviceName:${gitSha}`
-      const podsStdout = `${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
+      const podsStdout = `${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -73,15 +73,15 @@ ${image}
 `
       const gitSha = 'abc123'
       const image = `cache.artifactor.ee/serviceName:${gitSha}`
-      const podsStdout = `${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
+      const podsStdout = `${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -107,20 +107,20 @@ ${image}
 
     test('no locked deployments, one image version multiple containers', async () => {
       const deploymentsStdout = `<none>
-<none>
-<none>
+<none>   <none>
+<none>   <none>
 `
       const gitSha = 'abc123'
       const image = `prod.artifactor.ee/serviceName:${gitSha}`
       const podsStdout = `${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image},otherimage:latest
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image},otherimage:latest   <none>
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -145,22 +145,22 @@ ${image},otherimage:latest
     })
 
     test('no locked deployments, two image versions', async () => {
-      const deploymentsStdout = `<none>
+      const deploymentsStdout = `<none>   <none>
 <none>
 <none>
 `
       const gitSha = 'abc123'
       const image = `prod.artifactor.ee/serviceName:${gitSha}`
-      const podsStdout = `${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-prod.artifactor.ee/serviceName:567def
+      const podsStdout = `${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+prod.artifactor.ee/serviceName:567def   <none>
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -194,17 +194,17 @@ prod.artifactor.ee/serviceName:567def
 `
       const gitSha = 'abc123'
       const image = `prod.artifactor.ee/serviceName:${gitSha}`
-      const podsStdout = `${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image},other:1.0.0
-prod.artifactor.ee/serviceName:567def
-prod.artifactor.ee/serviceName:567def,other:latest
+      const podsStdout = `${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image},other:1.0.0   <none>
+prod.artifactor.ee/serviceName:567def   <none>
+prod.artifactor.ee/serviceName:567def,other:latest   <none>
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -240,15 +240,15 @@ prod.artifactor.ee/serviceName:567def,other:latest
 `
       const gitSha = 'abc123'
       const image = `prod.artifactor.ee/otherthing:${gitSha}`
-      const podsStdout = `${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
+      const podsStdout = `${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -311,15 +311,15 @@ true
 `
       const gitSha = 'abc123'
       const image = `prod.artifactor.ee/serviceName:${gitSha}`
-      const podsStdout = `${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
+      const podsStdout = `${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -357,16 +357,16 @@ true
 `
       const gitSha = 'abc123'
       const image = `prod.artifactor.ee/serviceName:${gitSha}`
-      const podsStdout = `${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-prod.artifactor.ee/serviceName:def678
+      const podsStdout = `${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+prod.artifactor.ee/serviceName:def678   <none>
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -403,16 +403,16 @@ true
 `
       const gitSha = 'abc123'
       const image = `prod.artifactor.ee/serviceName:${gitSha}`
-      const podsStdout = `${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-otherthing:latest,prod.artifactor.ee/serviceName:def678
+      const podsStdout = `${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+otherthing:latest,prod.artifactor.ee/serviceName:def678   <none>
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -449,16 +449,16 @@ true
 `
       const gitSha = 'abc123'
       const image = `prod.artifactor.ee/serviceName:${gitSha}`
-      const podsStdout = `${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-prod.artifactor.ee/serviceName:def678,otherthing:latest
+      const podsStdout = `${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+prod.artifactor.ee/serviceName:def678,otherthing:latest   <none>
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -522,17 +522,17 @@ prod.artifactor.ee/serviceName:def678,otherthing:latest
 `
       const gitSha = 'abc123'
       const image = `prod.artifactor.ee/serviceName:${gitSha}`
-      const podsStdout = `${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image},other:1.0.0
-prod.artifactor.ee/serviceName:567def
-prod.artifactor.ee/serviceName:567def,other:latest
+      const podsStdout = `${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image},other:1.0.0   <none>
+prod.artifactor.ee/serviceName:567def   <none>
+prod.artifactor.ee/serviceName:567def,other:latest   <none>
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(
@@ -566,15 +566,15 @@ prod.artifactor.ee/serviceName:567def,other:latest
 `
       const gitSha = 'abc123'
       const image = `prod.artifactor.ee/otherthing:${gitSha}`
-      const podsStdout = `${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
-${image}
+      const podsStdout = `${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
+${image}   <none>
 `
       const runKubectlMock = mocked(runKubectl)
       runKubectlMock.mockImplementation(

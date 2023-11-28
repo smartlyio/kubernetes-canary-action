@@ -27,7 +27,10 @@ export function stringToArray(value: string, sep?: string): string[] {
   if (!trimmed) {
     return []
   }
-  return value.trim().split(separator)
+  return value
+    .trim()
+    .split(separator)
+    .filter(e => e !== '')
 }
 
 export function uniq(items: string[]): string[] {
