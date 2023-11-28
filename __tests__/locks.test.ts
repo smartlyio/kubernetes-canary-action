@@ -107,12 +107,12 @@ ${image}   <none>
 
     test('no locked deployments, one image version multiple containers', async () => {
       const deploymentsStdout = `<none>
-<none>   <none>
-<none>   <none>
+<none>
+<none>
 `
       const gitSha = 'abc123'
       const image = `prod.artifactor.ee/serviceName:${gitSha}`
-      const podsStdout = `${image}
+      const podsStdout = `${image}   <none>
 ${image}   <none>
 ${image}   <none>
 ${image}   <none>
@@ -145,7 +145,7 @@ ${image},otherimage:latest   <none>
     })
 
     test('no locked deployments, two image versions', async () => {
-      const deploymentsStdout = `<none>   <none>
+      const deploymentsStdout = `<none>
 <none>
 <none>
 `
