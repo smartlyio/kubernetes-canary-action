@@ -23,10 +23,16 @@ export async function isLocked(
     '--selector=canary!=true',
     '--no-headers',
     '-o',
-    'custom-columns=NAME:.spec.containers[*].image'
+    'custom-columns=NAME:.spec.containers[*].image,TIMESTAMP:.metadata.deletionTimestamp'
   ])
   const images = uniq(
     stringToArray(imagesRaw)
+      // Split into image/timestamp
+      .map(image => stringToArray(image, ' '))
+      // Only pods that have no deletion timestamp set
+      .filter(([, deletionTimestamp]) => deletionTimestamp === '<none>')
+      .map(([image]) => image)
+      // Extract all images from the list
       .map(image => stringToArray(image, ','))
       .flat()
       .filter(value => {
