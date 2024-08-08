@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-22.04
     id: is_locked
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Authenticate with the cluster
         env:
           KUBERNETES_AUTH_TOKEN: ${{ secrets.KUBERNETES_AUTH_TOKEN }}
