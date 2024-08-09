@@ -66,7 +66,10 @@ function stringToArray(value, sep) {
     if (!trimmed) {
         return [];
     }
-    return value.trim().split(separator);
+    return value
+        .trim()
+        .split(separator)
+        .filter(e => e !== '');
 }
 exports.stringToArray = stringToArray;
 function uniq(items) {
@@ -137,9 +140,15 @@ function isLocked(kubernetesContext, serviceName, isProduction) {
             '--selector=canary!=true',
             '--no-headers',
             '-o',
-            'custom-columns=NAME:.spec.containers[*].image'
+            'custom-columns=NAME:.spec.containers[*].image,TIMESTAMP:.metadata.deletionTimestamp'
         ]);
         const images = (0, kubectl_1.uniq)((0, kubectl_1.stringToArray)(imagesRaw)
+            // Split into image/timestamp
+            .map(image => (0, kubectl_1.stringToArray)(image, ' '))
+            // Only pods that have no deletion timestamp set
+            .filter(([, deletionTimestamp]) => deletionTimestamp === '<none>')
+            .map(([image]) => image)
+            // Extract all images from the list
             .map(image => (0, kubectl_1.stringToArray)(image, ','))
             .flat()
             .filter(value => {
