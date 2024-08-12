@@ -28,12 +28,12 @@ inputs:
       deploying a new version even if previous rollout is stuck, or if
       no version is deployed at all.
     required: false
-    default: "false"
+    default: 'false'
 outputs:
   CURRENT_IMAGE_SHA:
     description: 'Current docker image tag running in the cluster'
   LOCKED:
     description: 'Is deployment currently locked [true/false]'
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
