@@ -7,10 +7,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
-    - name: Set Node.js 16.x
-      uses: actions/setup-node@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: 16.x
+        node-version-file: .node-version
     - name: "Install"
       run: |
         npm install
@@ -32,10 +31,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
-    - name: Set Node.js 16.x
-      uses: actions/setup-node@v4
+    - uses: actions/setup-node@v4
       with:
-        node-version: 16.x
+        node-version-file: .node-version
     - name: "Build action for test"
       run: |
         npm install

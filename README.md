@@ -42,7 +42,7 @@ on:
 
 jobs:
   is_locked:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     id: is_locked
     steps:
       - uses: actions/checkout@v4
